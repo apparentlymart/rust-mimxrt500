@@ -1,4 +1,5 @@
 [workspace]
 members = [
   "mimxrt595s",
+  "mimxrt500-hal",
 ]

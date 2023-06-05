@@ -67,6 +67,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "jlink_rtt"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42f6af40154f64bd7095b5245d6933fef99b0a28c432b38a676cfafaa0aedfc2"
+
+[[package]]
+name = "mimxrt500-hal"
+version = "0.1.0"
+dependencies = [
+ "cortex-m",
+ "embedded-hal",
+ "jlink_rtt",
+ "mimxrt595s",
+ "nb 1.1.0",
+ "paste",
+]
+
+[[package]]
 name = "mimxrt595s"
 version = "0.1.0"
 dependencies = [
@@ -90,6 +108,12 @@ name = "nb"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d5439c4ad607c3c23abf66de8c8bf57ba8adcd1f129e699851a6e43935d339d"
+
+[[package]]
+name = "paste"
+version = "1.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f746c4065a8fa3fe23974dd82f15431cc8d40779821001404d10d2e79ca7d79"
 
 [[package]]
 name = "proc-macro2"

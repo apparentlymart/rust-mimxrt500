@@ -37,6 +37,10 @@ pub mod prelude;
 #[cfg(feature = "device")]
 pub mod gpio;
 
+/// Generating the configuration structure that the Boot ROM expects to find in flash.
+#[cfg(feature = "device")]
+pub mod flashconfig;
+
 #[cfg(feature = "use_rtt")]
 pub use jlink_rtt;
 

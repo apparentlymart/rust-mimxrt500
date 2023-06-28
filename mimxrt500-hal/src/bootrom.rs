@@ -1,4 +1,3 @@
-
 /// Describes the shape of the flash configuration header that the Boot ROM
 /// expects to find at offset 0x0400 in the flash memory connected to
 /// FlexSPI0, if booting from that device.
@@ -11,6 +10,7 @@
 /// See _i.MX RT500 Reference Manual_ section 18.6.1.2:
 /// FlexSPI NOR Configuration Block(FCB).
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct FlexSpiNorFlashConfig {
     /// Common memory configuration info via FlexSPI.
     pub mem_config: FlexSpiMemConfig,
@@ -43,6 +43,7 @@ pub struct FlexSpiNorFlashConfig {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct FlexSpiMemConfig {
     /// Tag, fixed value `0x42464346`.
     pub tag: u32,
@@ -133,7 +134,13 @@ pub struct FlexSpiMemConfig {
     pub reserved4: [u32; 4],
 }
 
+impl FlexSpiMemConfig {
+    pub const TAG: u32 = 0x42464346;
+    pub const VERSION: u32 = 0x56010400;
+}
+
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct FlexSpiLutSeq {
     /// Sequence Number, valid number: 1-16.
     pub seq_num: u8,
@@ -144,9 +151,72 @@ pub struct FlexSpiLutSeq {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub struct FlexSpiDllTime {
     /// Data valid time, in terms of 100ps.
     pub time_100ps: u8,
     /// Data valid time, in terms of delay cells.
     pub delay_cells: u8,
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, PartialEq, Eq)]
+#[allow(non_camel_case_types)]
+pub enum FlexspiLutCmd {
+    CMD_SDR = 0x01,
+    CMD_DDR = 0x21,
+    RADDR_SDR = 0x02,
+    RADDR_DDR = 0x22,
+    CADDR_SDR = 0x03,
+    CADDR_DDR = 0x23,
+    MODE1_SDR = 0x04,
+    MODE1_DDR = 0x24,
+    MODE2_SDR = 0x05,
+    MODE2_DDR = 0x25,
+    MODE4_SDR = 0x06,
+    MODE4_DDR = 0x26,
+    MODE8_SDR = 0x07,
+    MODE8_DDR = 0x27,
+    WRITE_SDR = 0x08,
+    WRITE_DDR = 0x28,
+    READ_SDR = 0x09,
+    READ_DDR = 0x29,
+    LEARN_SDR = 0x0A,
+    LEARN_DDR = 0x2A,
+    DATSZ_SDR = 0x0B,
+    DATSZ_DDR = 0x2B,
+    DUMMY_SDR = 0x0C,
+    DUMMY_DDR = 0x2C,
+    DUMMY_RWDS_SDR = 0x0D,
+    DUMMY_RWDS_DDR = 0x2D,
+    JMP_ON_CS = 0x1F,
+    STOP_EXE = 0,
+}
+
+#[repr(u8)]
+#[derive(Clone, Copy, PartialEq, Eq)]
+#[allow(non_camel_case_types)]
+pub enum FlexspiPad {
+    FLEXSPI_1PAD = 0,
+    FLEXSPI_2PAD = 1,
+    FLEXSPI_4PAD = 2,
+    FLEXSPI_8PAD = 3,
+}
+
+pub const fn flexspi_lut_seq(
+    cmd0: FlexspiLutCmd,
+    pad0: FlexspiPad,
+    op0: u8,
+    cmd1: FlexspiLutCmd,
+    pad1: FlexspiPad,
+    op1: u8,
+) -> u32 {
+    let cmd0_raw = ((cmd0 as u32) << 10) & 0xfc00;
+    let pad0_raw = ((pad0 as u32) << 8) & 0x300;
+    let op0_raw = ((op0 as u32) << 0) & 0xff;
+    let cmd1_raw = ((cmd1 as u32) << 26) & 0xfc000000;
+    let pad1_raw = ((pad1 as u32) << 24) & 0x3000000;
+    let op1_raw = ((op1 as u32) << 16) & 0xff0000;
+
+    cmd0_raw | pad0_raw | op0_raw | cmd1_raw | pad1_raw | op1_raw
 }

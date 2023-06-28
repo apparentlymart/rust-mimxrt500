@@ -1,0 +1,13 @@
+[package]
+edition = "2021"
+name = "scratch"
+version = "0.1.0"
+
+[dependencies]
+cortex-m = {version = "0.7.7", features = ["critical-section-single-core"]}
+cortex-m-rt = "0.6.15"
+mimxrt500-hal = {path = "../mimxrt500-hal", features = ["mimxrt595s_rt"]}
+mimxrt595-evk = {path = "../mimxrt595-evk"}
+mimxrt595s = {path = "../mimxrt595s"}
+panic-rtt-target = {version = "0.1.2", features = ["cortex-m"]}
+rtt-target = "0.4.0"

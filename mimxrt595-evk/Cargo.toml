@@ -1,0 +1,9 @@
+[package]
+name = "mimxrt595-evk"
+version = "0.1.0"
+edition = "2021"
+description = "Board support package for NXP i.MX RT595 Evaluation Kit"
+
+[dependencies]
+mimxrt500-hal = { path = "../mimxrt500-hal", features = ["mimxrt595s"] }
+mimxrt595s = { path = "../mimxrt595s" }

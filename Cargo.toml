@@ -2,4 +2,6 @@
 members = [
   "mimxrt595s",
   "mimxrt500-hal",
+  "mimxrt595-evk",
+  "scratch",
 ]

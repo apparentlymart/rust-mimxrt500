@@ -106,6 +106,11 @@ static NOR_FLASH_CONFIG: FlexSpiNorFlashConfig = FlexSpiNorFlashConfig {
             flexspi_lut_seq(CMD_SDR, FLEXSPI_1PAD, 0x00, CMD_SDR, FLEXSPI_1PAD, 0x00),
             flexspi_lut_seq(CMD_SDR, FLEXSPI_1PAD, 0x00, WRITE_SDR, FLEXSPI_1PAD, 0x01),
             0,
+            // Unused
+            0,
+            0,
+            0,
+            0,
             // Erase block
             flexspi_lut_seq(CMD_DDR, FLEXSPI_8PAD, 0xDC, CMD_DDR, FLEXSPI_8PAD, 0x23),
             flexspi_lut_seq(RADDR_DDR, FLEXSPI_8PAD, 0x20, STOP_EXE, FLEXSPI_1PAD, 0x00),
@@ -116,20 +121,17 @@ static NOR_FLASH_CONFIG: FlexSpiNorFlashConfig = FlexSpiNorFlashConfig {
             flexspi_lut_seq(RADDR_DDR, FLEXSPI_8PAD, 0x20, WRITE_DDR, FLEXSPI_8PAD, 0x04),
             0,
             0,
+            // Unused
+            0,
+            0,
+            0,
+            0,
             // Erase chip
             flexspi_lut_seq(CMD_DDR, FLEXSPI_8PAD, 0x60, CMD_DDR, FLEXSPI_8PAD, 0x9F),
             0,
             0,
             0,
             // Remainder is unused
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
             0,
             0,
             0,

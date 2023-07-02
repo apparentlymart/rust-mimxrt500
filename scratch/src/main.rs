@@ -10,9 +10,9 @@ extern crate mimxrt595s;
 // Must link this to get the flash configuration block.
 extern crate mimxrt595_evk;
 
-use mimxrt500_rt::entry;
+use mimxrt500_rt::{entry, pre_init};
 use panic_rtt_target as _;
-use rtt_target::{rprintln, rtt_init_default};
+use rtt_target::{rprintln, rtt_init_default, rtt_init_print};
 
 const _CLKCTL1_BASE_ADDR: u32 = 0x40021000;
 const _RSTCTL1_BASE_ADDR: u32 = 0x40020000;
@@ -44,8 +44,7 @@ unsafe fn wr32(addr: u32, v: u32) {
 
 #[entry]
 fn main() -> ! {
-    rtt_init_default!();
-    rprintln!("hello world!");
+    rtt_init_print!();
 
     const BIT14: u32 = 1 << 14;
     unsafe {
@@ -61,6 +60,7 @@ fn main() -> ! {
         unsafe {
             wr32(_GPIO_NOT0, BIT14);
         }
+        rprintln!("hello world!");
 
         for _ in 0..80000 {
             cortex_m::asm::nop();

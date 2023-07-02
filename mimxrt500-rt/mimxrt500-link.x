@@ -1,3 +1,6 @@
+/* # Interrupt vectors */
+EXTERN(__INTERRUPTS); /* `static` variable similar to `__EXCEPTIONS` */
+
 INCLUDE memory.x
 INCLUDE device.x
 
@@ -28,9 +31,6 @@ PROVIDE(SysTick = DefaultHandler);
 PROVIDE(DefaultHandler = DefaultHandler_);
 PROVIDE(HardFault = HardFault_);
 
-/* # Interrupt vectors */
-EXTERN(__INTERRUPTS); /* `static` variable similar to `__EXCEPTIONS` */
-
 /* # Pre-initialization function */
 /* If the user overrides this using the `pre_init!` macro or by creating a `__pre_init` function,
    then the function this points to will be called before the RAM is initialized. */
@@ -50,10 +50,14 @@ SECTIONS
 
   /* ## Sections in FLASH */
   /* ### Flash configuration header for the RT5xx boot ROM */
-  .boot_hdr (ORIGIN(FLASH) + 0x0400) :
+  .boot_hdr ORIGIN(FLASH) :
   {
+    FILL(0x00000000)
+    . = ORIGIN(FLASH) + 0x0400;
     _boot_hdr = .;
     KEEP(*(.boot_hdr .boot_hdr.*));
+    . = ORIGIN(FLASH) + 0x1000;
+    FILL(0xffffffff)
   } > FLASH
 
   /* ### Vector table */

@@ -26,7 +26,7 @@ pub use self::Interrupt as interrupt;
 pub use cortex_m::peripheral::Peripherals as CorePeripherals;
 pub use cortex_m::peripheral::{CBP, CPUID, DCB, DWT, FPB, FPU, ITM, MPU, NVIC, SCB, SYST, TPIU};
 #[cfg(feature = "rt")]
-pub use cortex_m_rt::interrupt;
+pub use mimxrt500_rt::interrupt;
 #[allow(unused_imports)]
 use generic::*;
 #[doc = r"Common register and bit access and modify traits"]

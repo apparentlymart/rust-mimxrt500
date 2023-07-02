@@ -2,6 +2,8 @@
 members = [
   "mimxrt595s",
   "mimxrt500-hal",
+  "mimxrt500-rt",
   "mimxrt595-evk",
   "scratch",
 ]
+resolver = "2"

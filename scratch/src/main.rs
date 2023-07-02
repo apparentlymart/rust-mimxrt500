@@ -5,61 +5,43 @@
 extern crate mimxrt500_rt;
 
 // Must link this generated PAC to get its default interrupt vector table.
-extern crate mimxrt595s;
+extern crate mimxrt595s as pac;
 
 // Must link this to get the flash configuration block.
 extern crate mimxrt595_evk;
 
-use mimxrt500_rt::{entry, pre_init};
+use mimxrt500_rt::entry;
 use panic_rtt_target as _;
-use rtt_target::{rprintln, rtt_init_default, rtt_init_print};
-
-const _CLKCTL1_BASE_ADDR: u32 = 0x40021000;
-const _RSTCTL1_BASE_ADDR: u32 = 0x40020000;
-const _IOCON_BASE_ADDR: u32 = 0x40004000;
-const _GPIO_BASE_ADDR: u32 = 0x40100000;
-
-const _PRSTCTL1_CLR: u32 = _RSTCTL1_BASE_ADDR + 0x0074;
-
-const _CLKCTL1_PSCCTL1_SET: u32 = _CLKCTL1_BASE_ADDR + 0x0044;
-
-const _GPIO_DIR0: u32 = _GPIO_BASE_ADDR + 0x2000;
-const _GPIO_SET0: u32 = _GPIO_BASE_ADDR + 0x2200;
-const _GPIO_CLR0: u32 = _GPIO_BASE_ADDR + 0x2280;
-const _GPIO_NOT0: u32 = _GPIO_BASE_ADDR + 0x2300;
-
-const _PIO0_14: u32 = _IOCON_BASE_ADDR + 0x0038;
-const _PIO0_26: u32 = _IOCON_BASE_ADDR + 0x0068;
-const _PIO0_31: u32 = _IOCON_BASE_ADDR + 0x007c;
-
-#[inline(always)]
-const fn raw_ptr<T>(addr: u32) -> *mut T {
-    addr as *mut T
-}
-
-#[inline(always)]
-unsafe fn wr32(addr: u32, v: u32) {
-    core::ptr::write_volatile(raw_ptr(addr), v)
-}
+use rtt_target::{rprintln, rtt_init_print};
 
 #[entry]
 fn main() -> ! {
     rtt_init_print!();
 
-    const BIT14: u32 = 1 << 14;
-    unsafe {
-        wr32(_CLKCTL1_PSCCTL1_SET, 1); // Enable GPIO port clock
-        wr32(_PRSTCTL1_CLR, 1); // Take GPIO out of reset
-        wr32(_PIO0_14, 0); // Disable alternate function
-        wr32(_GPIO_CLR0, BIT14); // LED starts off
-        wr32(_GPIO_DIR0, BIT14); // Our pin is an output
-    }
+    let p = unsafe { pac::Peripherals::steal() };
+
+    // Enable GPIO port clock
+    let clkctl1 = p.CLKCTL1;
+    clkctl1.pscctl1_set.write(|w| w.hsgpio0_clk().set_bit());
+
+    // Take GPIO out of reset
+    let rstctl1 = p.RSTCTL1;
+    rstctl1.prstctl1_clr.write(|w| w.hsgpio0().set_bit());
+
+    // Disable alternate function
+    let iopctl = p.IOPCTL;
+    iopctl.pio0_14.write(|w| w.fsel().fsel_0());
+
+    // LED is initially off
+    let gpio = p.GPIO;
+    gpio.clr[0].write(|w| w.clrp14().clear_bit_by_one());
+
+    // The pin is an output
+    gpio.dir[0].write(|w| w.dirp14().set_bit());
 
     loop {
         // Toggle the LED, using the "NOT" register
-        unsafe {
-            wr32(_GPIO_NOT0, BIT14);
-        }
+        gpio.not[0].write(|w| w.notp14().set_bit());
         rprintln!("hello world!");
 
         for _ in 0..80000 {

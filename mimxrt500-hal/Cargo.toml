@@ -30,3 +30,6 @@ use_rtt = ["dep:jlink_rtt"]
 
 [package.metadata.docs.rs]
 features = ["mimxrt595s"]
+
+[package.metadata.release]
+enable-features = ["mimxrt595s"]

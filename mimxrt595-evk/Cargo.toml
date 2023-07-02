@@ -1,9 +1,11 @@
 [package]
-name = "mimxrt595-evk"
-version = "0.1.0"
-edition = "2021"
 description = "Board support package for NXP i.MX RT595 Evaluation Kit"
+edition = "2021"
+license = "MIT"
+name = "mimxrt595-evk"
+repository = "https://github.com/apparentlymart/rust-mimxrt500"
+version = "0.1.0"
 
 [dependencies]
-mimxrt500-hal = { path = "../mimxrt500-hal", features = ["mimxrt595s"] }
-mimxrt595s = { path = "../mimxrt595s" }
+mimxrt500-hal = {version = "0.2.0", path = "../mimxrt500-hal", features = ["mimxrt595s"]}
+mimxrt595s = {version = "0.2.0", path = "../mimxrt595s"}

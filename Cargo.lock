@@ -65,7 +65,7 @@ checksum = "42f6af40154f64bd7095b5245d6933fef99b0a28c432b38a676cfafaa0aedfc2"
 
 [[package]]
 name = "mimxrt500-hal"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cortex-m",
  "embedded-hal",
@@ -93,7 +93,7 @@ dependencies = [
 
 [[package]]
 name = "mimxrt595s"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cortex-m",
  "critical-section",

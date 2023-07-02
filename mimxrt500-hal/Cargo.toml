@@ -4,13 +4,13 @@ edition = "2021"
 license = "MIT"
 name = "mimxrt500-hal"
 repository = "https://github.com/apparentlymart/rust-mimxrt500"
-version = "0.1.0"
+version = "0.2.0"
 
 [dependencies]
 cortex-m = "0.7"
 embedded-hal = "0.2"
 jlink_rtt = {version = "0.2", optional = true}
-mimxrt595s = {version = "0.1.0", path = "../mimxrt595s", optional = true}
+mimxrt595s = {version = "0.2.0", path = "../mimxrt595s", optional = true}
 nb = "1.1"
 paste = "1.0.11"
 

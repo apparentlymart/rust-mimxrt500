@@ -10,6 +10,8 @@ extern crate mimxrt595s as pac;
 // Must link this to get the flash configuration block.
 extern crate mimxrt595_evk;
 
+use mimxrt500_hal as hal;
+
 use mimxrt500_rt::entry;
 use panic_rtt_target as _;
 use rtt_target::{rprintln, rtt_init_print};
@@ -18,30 +20,40 @@ use rtt_target::{rprintln, rtt_init_print};
 fn main() -> ! {
     rtt_init_print!();
 
+    rprintln!("startup");
+
     let p = unsafe { pac::Peripherals::steal() };
+
+    rprintln!("stole peripheral");
 
     // Enable GPIO port clock
     let clkctl1 = p.CLKCTL1;
     clkctl1.pscctl1_set.write(|w| w.hsgpio0_clk().set_bit());
 
+    rprintln!("enabled clock");
+
     // Take GPIO out of reset
     let rstctl1 = p.RSTCTL1;
     rstctl1.prstctl1_clr.write(|w| w.hsgpio0().set_bit());
 
-    // Disable alternate function
-    let iopctl = p.IOPCTL;
-    iopctl.pio0_14.write(|w| w.fsel().fsel_0());
+    rprintln!("GPIO out of reset");
+
+    let pins = hal::gpio::Pins::new(p.IOPCTL, p.GPIO);
+    rprintln!("we have the pins object");
 
     // LED is initially off
-    let gpio = p.GPIO;
-    gpio.clr[0].write(|w| w.clrp14().clear_bit_by_one());
+    let led_pin = pins.pio0_14;
+    led_pin.set_output(false);
 
-    // The pin is an output
-    gpio.dir[0].write(|w| w.dirp14().set_bit());
+    rprintln!("LED pin is initially off");
+
+    let led_pin: hal::gpio::pin::Pin<hal::gpio::pin::PIO0_14, hal::gpio::pin::output::OutputPushPull> = led_pin.into();
+
+    rprintln!("LED pin is now a push-pull output");
 
     loop {
-        // Toggle the LED, using the "NOT" register
-        gpio.not[0].write(|w| w.notp14().set_bit());
+        // Toggle the LED
+        led_pin.toggle_output();
         rprintln!("hello world!");
 
         for _ in 0..80000 {

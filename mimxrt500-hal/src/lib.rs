@@ -33,6 +33,14 @@ define_pac!((mimxrt595s, "mimxrt595s"));
 #[cfg(feature = "device")]
 pub mod prelude;
 
+/// System and peripheral clock control.
+#[cfg(feature = "device")]
+pub mod clocks;
+
+/// Peripheral reset control.
+#[cfg(feature = "device")]
+pub mod resets;
+
 /// GPIO functionality and pin alternate function management.
 #[cfg(feature = "device")]
 pub mod gpio;

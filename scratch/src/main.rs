@@ -26,19 +26,10 @@ fn main() -> ! {
 
     rprintln!("stole peripheral");
 
-    // Enable GPIO port clock
-    let clkctl1 = p.CLKCTL1;
-    clkctl1.pscctl1_set.write(|w| w.hsgpio0_clk().set_bit());
+    let clocks = hal::clocks::Clocks::new(p.CLKCTL0, p.CLKCTL1);
+    let resets = hal::resets::Resets::new(p.RSTCTL0, p.RSTCTL1);
 
-    rprintln!("enabled clock");
-
-    // Take GPIO out of reset
-    let rstctl1 = p.RSTCTL1;
-    rstctl1.prstctl1_clr.write(|w| w.hsgpio0().set_bit());
-
-    rprintln!("GPIO out of reset");
-
-    let pins = hal::gpio::Pins::new(p.IOPCTL, p.GPIO);
+    let pins = hal::gpio::Pins::new(p.IOPCTL, p.GPIO, clocks.gpio.into(), resets.gpio.into());
     rprintln!("we have the pins object");
 
     // LED is initially off

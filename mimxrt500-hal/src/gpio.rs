@@ -1,4 +1,6 @@
+use crate::clocks::GpioClock;
 use crate::pac;
+use crate::resets::GpioReset;
 
 /// Compile-time (type-based) GPIO pin management.
 pub mod pin;
@@ -8,28 +10,29 @@ pub mod dynpin;
 
 mod internal;
 
-pub struct PinDependencies {
-    iopctl: pac::IOPCTL,
-    gpio: pac::GPIO,
+pub struct Dependencies {
+    pub iopctl: pac::IOPCTL,
+    pub gpio: pac::GPIO,
+    pub gpio_clock: GpioClock<true>,
+    pub gpio_reset: GpioReset<false>,
 }
 
 pub struct Pins {
-    deps: PinDependencies,
+    deps: Dependencies,
 
-    pub pio0_0: pin::Pin<
-        pin::PIO0_0,
-        pin::Unknown,
-    >,
-    pub pio0_14: pin::Pin<
-        pin::PIO0_14,
-        pin::Unknown,
-    >,
+    pub pio0_0: pin::Pin<pin::PIO0_0, pin::Unknown>,
+    pub pio0_14: pin::Pin<pin::PIO0_14, pin::Unknown>,
 }
 
 impl Pins {
     #[inline(always)]
-    pub const fn new(iopctl: pac::IOPCTL, gpio: pac::GPIO) -> Self {
-        let deps = PinDependencies { iopctl, gpio };
+    pub const fn new(iopctl: pac::IOPCTL, gpio: pac::GPIO, gpio_clock: GpioClock<true>, gpio_reset: GpioReset<false>) -> Self {
+        let deps = Dependencies {
+            iopctl,
+            gpio,
+            gpio_clock,
+            gpio_reset,
+        };
         Self {
             deps,
             pio0_0: unsafe { pin::Pin::new() },
@@ -44,7 +47,7 @@ impl Pins {
     /// them to be in a known state, which includes creating a new instance
     /// of [`Pins`].
     #[inline(always)]
-    pub const unsafe fn free(self) -> PinDependencies {
+    pub const unsafe fn free(self) -> Dependencies {
         self.deps
     }
 

@@ -30,9 +30,6 @@ macro_rules! define_pac {
 
 define_pac!((mimxrt595s, "mimxrt595s"));
 
-#[cfg(feature = "device")]
-pub mod prelude;
-
 /// System and peripheral clock control.
 #[cfg(feature = "device")]
 pub mod clocks;

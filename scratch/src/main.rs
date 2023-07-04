@@ -35,16 +35,18 @@ fn main() -> ! {
     // LED is initially off
     let led_pin = pins.pio0_14;
     led_pin.set_output(false);
-
     rprintln!("LED pin is initially off");
 
     let led_pin: hal::gpio::pin::Pin<hal::gpio::pin::PIO0_14, hal::gpio::pin::output::OutputPushPull> = led_pin.into();
-
     rprintln!("LED pin is now a push-pull output");
 
+    blinky(led_pin)
+}
+
+fn blinky(mut led_pin: impl embedded_hal::digital::ToggleableOutputPin) -> ! {
     loop {
         // Toggle the LED
-        led_pin.toggle_output();
+        led_pin.toggle().unwrap();
         rprintln!("hello world!");
 
         for _ in 0..80000 {

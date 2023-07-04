@@ -1,4 +1,5 @@
-use super::dynpin::{DynAltFunc, DynInput, DynOutput, DynPinId, DynPinMode};
+use super::dynpin::{DynPinId, DynPinMode};
+use embedded_hal::digital as ehal;
 use core::marker::PhantomData;
 use paste::paste;
 
@@ -28,7 +29,11 @@ pub trait PinId: private::Sealed {
     const DYN: DynPinId;
 }
 
-/// A type-level GPIO pin, parameterized by [`PinId`] and [`PinMode`] types
+/// A type-level GPIO pin, parameterized by [`PinId`] and [`PinMode`] types.
+///
+/// This is the main interesting type for pin configuration and GPIO
+/// functionality. Use `.into()` to switch a pin into a different mode and
+/// therefore obtain a new `Pin` with different parameters.
 pub struct Pin<I, M>
 where
     I: PinId,
@@ -219,4 +224,48 @@ impl<Id: PinId, const OOD: bool, const OFD: bool, const OSS: bool, IC: input::In
     fn from(value: Pin<Id, output::Output<OOD, OFD, OSS>>) -> Self {
         value.into_new_mode()
     }
+}
+
+/// Pins in input mode implement [`ehal::InputPin`].
+///
+/// This implementation does not take into account the possibility that the
+/// port might be configured to invert its input. If that flag is set then
+/// the two methods will return opposite values.
+impl<Id: PinId, C: input::InputConfig> ehal::InputPin for Pin<Id, input::Input<C>> {
+    #[inline(always)]
+    fn is_high(&self) -> Result<bool, Self::Error> {
+        Ok(self.regs.input_is_high())
+    }
+
+    #[inline(always)]
+    fn is_low(&self) -> Result<bool, Self::Error> {
+        Ok(!self.regs.input_is_high())
+    }
+}
+
+/// Pins in output mode implement [`ehal::OutputPin`].
+impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> ehal::OutputPin for Pin<Id, output::Output<OD, FD, SS>> {
+    #[inline(always)]
+    fn set_low(&mut self) -> Result<(), Self::Error> {
+        self.regs.set_output_value(false);
+        Ok(())
+    }
+
+    #[inline(always)]
+    fn set_high(&mut self) -> Result<(), Self::Error> {
+        self.regs.set_output_value(true);
+        Ok(())
+    }
+}
+
+/// Pins in output mode implement [`ehal::ToggleableOutputPin`].
+impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> ehal::ToggleableOutputPin for Pin<Id, output::Output<OD, FD, SS>> {
+    fn toggle(&mut self) -> Result<(), Self::Error> {
+        self.regs.toggle_output_value();
+        Ok(())
+    }
+}
+
+impl<Id: PinId, M: PinMode> ehal::ErrorType for Pin<Id, M> {
+    type Error = core::convert::Infallible;
 }

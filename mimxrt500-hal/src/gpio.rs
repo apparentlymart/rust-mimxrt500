@@ -17,11 +17,33 @@ pub struct Dependencies {
     pub gpio_reset: GpioReset<false>,
 }
 
+/// Encapsulates both the GPIO and IOPCTL peripherals, dealing with both
+/// general port configuration and GPIO functionality.
+///
+/// Create a singleton `Pins` by passing the prerequisites to [`Pins::new`],
+/// and then move the pins you need from the public fields of that object.
+/// Pins are initially in an unknown mode, and so a typical next step is to
+/// switch them into the required mode using the `.into` method for type
+/// conversion.
 pub struct Pins {
     deps: Dependencies,
 
     pub pio0_0: pin::Pin<pin::PIO0_0, pin::Unknown>,
+    pub pio0_1: pin::Pin<pin::PIO0_1, pin::Unknown>,
+    pub pio0_2: pin::Pin<pin::PIO0_2, pin::Unknown>,
+    pub pio0_3: pin::Pin<pin::PIO0_3, pin::Unknown>,
+    pub pio0_4: pin::Pin<pin::PIO0_4, pin::Unknown>,
+    pub pio0_5: pin::Pin<pin::PIO0_5, pin::Unknown>,
+    pub pio0_6: pin::Pin<pin::PIO0_6, pin::Unknown>,
+    pub pio0_7: pin::Pin<pin::PIO0_7, pin::Unknown>,
+    pub pio0_8: pin::Pin<pin::PIO0_8, pin::Unknown>,
+    pub pio0_9: pin::Pin<pin::PIO0_9, pin::Unknown>,
+    pub pio0_10: pin::Pin<pin::PIO0_10, pin::Unknown>,
+    pub pio0_11: pin::Pin<pin::PIO0_11, pin::Unknown>,
+    pub pio0_12: pin::Pin<pin::PIO0_12, pin::Unknown>,
+    pub pio0_13: pin::Pin<pin::PIO0_13, pin::Unknown>,
     pub pio0_14: pin::Pin<pin::PIO0_14, pin::Unknown>,
+    pub pio0_15: pin::Pin<pin::PIO0_15, pin::Unknown>,
 }
 
 impl Pins {
@@ -36,7 +58,21 @@ impl Pins {
         Self {
             deps,
             pio0_0: unsafe { pin::Pin::new() },
+            pio0_1: unsafe { pin::Pin::new() },
+            pio0_2: unsafe { pin::Pin::new() },
+            pio0_3: unsafe { pin::Pin::new() },
+            pio0_4: unsafe { pin::Pin::new() },
+            pio0_5: unsafe { pin::Pin::new() },
+            pio0_6: unsafe { pin::Pin::new() },
+            pio0_7: unsafe { pin::Pin::new() },
+            pio0_8: unsafe { pin::Pin::new() },
+            pio0_9: unsafe { pin::Pin::new() },
+            pio0_10: unsafe { pin::Pin::new() },
+            pio0_11: unsafe { pin::Pin::new() },
+            pio0_12: unsafe { pin::Pin::new() },
+            pio0_13: unsafe { pin::Pin::new() },
             pio0_14: unsafe { pin::Pin::new() },
+            pio0_15: unsafe { pin::Pin::new() },
         }
     }
 

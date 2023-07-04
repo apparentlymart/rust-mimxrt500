@@ -26,7 +26,7 @@ dependencies = [
  "bare-metal",
  "bitfield",
  "critical-section",
- "embedded-hal",
+ "embedded-hal 0.2.7",
  "volatile-register",
 ]
 
@@ -58,6 +58,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "embedded-hal"
+version = "1.0.0-alpha.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7724ebabcadfeb15920571dd727bc8ccde8586e52f2890bdb8182fdf42c3ff2"
+
+[[package]]
 name = "jlink_rtt"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -68,7 +74,7 @@ name = "mimxrt500-hal"
 version = "0.2.0"
 dependencies = [
  "cortex-m",
- "embedded-hal",
+ "embedded-hal 1.0.0-alpha.11",
  "jlink_rtt",
  "mimxrt595s",
  "nb 1.1.0",
@@ -183,6 +189,7 @@ name = "scratch"
 version = "0.1.0"
 dependencies = [
  "cortex-m",
+ "embedded-hal 1.0.0-alpha.11",
  "mimxrt500-hal",
  "mimxrt500-rt",
  "mimxrt595-evk",

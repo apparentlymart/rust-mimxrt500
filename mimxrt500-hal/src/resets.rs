@@ -1,8 +1,8 @@
 use crate::pac;
 
 pub struct Dependencies {
-    rstctl0: pac::RSTCTL0,
-    rstctl1: pac::RSTCTL1,
+    pub rstctl0: pac::RSTCTL0,
+    pub rstctl1: pac::RSTCTL1,
 }
 
 pub struct Resets {
@@ -19,6 +19,17 @@ impl Resets {
 
             gpio: unsafe { Reset::new() },
         }
+    }
+
+    /// Consume the [`Resets`] object and recover its dependencies.
+    ///
+    /// Safety: The peripherals are returned in an undefined state, and
+    /// so should both be reset to defaults before using them for anything that
+    /// expects them to be in a known state, which includes creating a new
+    /// instance of [`Resets`].
+    #[inline(always)]
+    pub const unsafe fn free(self) -> Dependencies {
+        self.deps
     }
 }
 

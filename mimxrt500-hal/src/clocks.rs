@@ -20,6 +20,17 @@ impl Clocks {
             gpio: unsafe { Clock::new() },
         }
     }
+
+    /// Consume the [`Clocks`] object and recover its dependencies.
+    ///
+    /// Safety: The peripherals are returned in an undefined state, and
+    /// so should both be reset to defaults before using them for anything that
+    /// expects them to be in a known state, which includes creating a new
+    /// instance of [`Clocks`].
+    #[inline(always)]
+    pub const unsafe fn free(self) -> Dependencies {
+        self.deps
+    }
 }
 
 pub struct Clock<P, const INDEX: usize, const MASK: u32, const ACTIVE: bool>

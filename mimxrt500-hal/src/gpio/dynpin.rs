@@ -1,3 +1,5 @@
+use super::pin;
+
 /// Value-level `enum` for disabled configurations
 #[derive(PartialEq, Eq, Clone, Copy)]
 pub enum DynDisabled {
@@ -93,10 +95,10 @@ impl DynPinMode {
                 let fsel = f.fsel();
                 let amena_ibena = match st {
                     DynSignalType::Digital => 1 << 6, // IBENA
-                    DynSignalType::Analog => 1 << 9, // AMENA
+                    DynSignalType::Analog => 1 << 9,  // AMENA
                 };
                 fsel | amena_ibena
-            },
+            }
         }
     }
 }
@@ -117,11 +119,48 @@ pub enum DynGroup {
     Group3 = 3,
     Group4 = 4,
     Group5 = 5,
+    Group6 = 6,
 }
 
 impl DynGroup {
     #[inline(always)]
     pub(super) const fn index(self) -> usize {
         self as usize
+    }
+}
+
+/// A value-level representation of a pin, with pin ID and mode decided at
+/// runtime.
+pub struct DynPin {
+    id: DynPinId,
+    mode: DynPinMode,
+}
+
+impl DynPin {
+    // Safety: Caller must ensure that `id` describes a valid pin and
+    // that `mode` accurately describes the current mode of that pin.
+    #[inline(always)]
+    pub(super) const unsafe fn new(id: DynPinId, mode: DynPinMode) -> Self {
+        Self { id, mode }
+    }
+
+    /// Attempt to convert the dynamic pin back into a type-based pin.
+    ///
+    /// If the `Id` and `Mode` generic parameters match the current dynamic
+    /// state of the pin then this returns `Ok` with a type-based `Pin`
+    /// object. If not then this returns `Err` to echo back the
+    /// originally-provided dynamic pin.
+    #[inline(always)]
+    pub fn into_type_based<Id: pin::PinId, Mode: pin::PinMode>(
+        self,
+    ) -> Result<pin::Pin<Id, Mode>, Self> {
+        let dest_id = Id::DYN;
+        let dest_mode = Mode::DYN;
+
+        if dest_id == self.id && dest_mode == self.mode {
+            Ok(unsafe { pin::Pin::new() })
+        } else {
+            Err(self)
+        }
     }
 }

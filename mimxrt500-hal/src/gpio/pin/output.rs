@@ -1,6 +1,13 @@
 use super::{private, PinMode};
 use super::super::dynpin::{DynOutput, DynPinMode};
 
+/// The [`PinMode`] for pins in output modes.
+///
+/// Output pins have a selection of independent configuration settings:
+/// - `OPEN_DRAIN`: Fakes an open-drain output by only actively driving
+///   the low state and relying on a pull-up for the high state.
+/// - `FULL_DRIVE`: Activates the stronger drive mode.
+/// - `SLOW_SLEW`: Activates a slower slew rate when the output state changes.
 pub struct Output<const OPEN_DRAIN: bool, const FULL_DRIVE: bool, const SLOW_SLEW: bool> {
 }
 impl<const OPEN_DRAIN: bool, const FULL_DRIVE: bool, const SLOW_SLEW: bool> PinMode for Output<OPEN_DRAIN, FULL_DRIVE, SLOW_SLEW> {

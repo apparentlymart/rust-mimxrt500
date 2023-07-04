@@ -1,10 +1,15 @@
-use super::dynpin::{DynPinId, DynPinMode};
+use super::dynpin::{DynPin, DynPinId, DynPinMode};
 use embedded_hal::digital as ehal;
 use core::marker::PhantomData;
 use paste::paste;
 
+/// Types for representing alternate function modes.
 pub mod alternate;
+
+/// Types for representing input modes.
 pub mod input;
+
+/// Types for representing output modes.
 pub mod output;
 
 pub trait PinMode: private::Sealed {
@@ -116,6 +121,39 @@ where
         self.regs.toggle_output_value()
     }
 
+    /// Reconfigures the pin into a push-pull output and returns the new pin.
+    #[inline(always)]
+    pub fn into_push_pull_output(self) -> Pin<I, output::OutputPushPull> {
+        self.into_new_mode()
+    }
+
+    /// Reconfigures the pin into a floating input and returns the new pin.
+    #[inline(always)]
+    pub fn into_input(self) -> Pin<I, input::InputFloating> {
+        self.into_new_mode()
+    }
+
+    /// Reconfigures the pin into an input with pull-up and returns the new pin.
+    #[inline(always)]
+    pub fn into_input_pullup(self) -> Pin<I, input::InputPullUp> {
+        self.into_new_mode()
+    }
+
+    /// Reconfigures the pin into an input with pull-down and returns the new pin.
+    #[inline(always)]
+    pub fn into_input_pulldown(self) -> Pin<I, input::InputPullDown> {
+        self.into_new_mode()
+    }
+
+    /// Reinterprets the pin as a value-based [`DynPin`], which tracks the
+    /// pin ID and mode as runtime data rather than as type parameters.
+    #[inline(always)]
+    pub const fn into_value_based(self) -> DynPin {
+        // Safety: this is safe as long as we've correctly guaranteed that it's
+        // impossible to construct a Pin with invalid ID and mode.
+        unsafe { DynPin::new(I::DYN, M::DYN) }
+    }    
+
 }
 
 struct InternalPinId<I: PinId>(PhantomData<I>);
@@ -154,39 +192,80 @@ macro_rules! pin_id {
     };
 }
 
-pin_id!(PIO0_0, Group0, 0);
-pin_id!(PIO0_1, Group0, 1);
-pin_id!(PIO0_2, Group0, 2);
-pin_id!(PIO0_3, Group0, 3);
-pin_id!(PIO0_4, Group0, 4);
-pin_id!(PIO0_5, Group0, 5);
-pin_id!(PIO0_6, Group0, 6);
-pin_id!(PIO0_7, Group0, 7);
-pin_id!(PIO0_8, Group0, 8);
-pin_id!(PIO0_9, Group0, 9);
-pin_id!(PIO0_10, Group0, 10);
-pin_id!(PIO0_11, Group0, 11);
-pin_id!(PIO0_12, Group0, 12);
-pin_id!(PIO0_13, Group0, 13);
-pin_id!(PIO0_14, Group0, 14);
-pin_id!(PIO0_15, Group0, 15);
+macro_rules! pin_id_group {
+    ($Group:literal) => {
+        paste! {
+            pin_id!([<PIO $Group _0>], [<Group $Group>], 0);
+            pin_id!([<PIO $Group _1>], [<Group $Group>], 1);
+            pin_id!([<PIO $Group _2>], [<Group $Group>], 2);
+            pin_id!([<PIO $Group _3>], [<Group $Group>], 3);
+            pin_id!([<PIO $Group _4>], [<Group $Group>], 4);
+            pin_id!([<PIO $Group _5>], [<Group $Group>], 5);
+            pin_id!([<PIO $Group _6>], [<Group $Group>], 6);
+            pin_id!([<PIO $Group _7>], [<Group $Group>], 7);
+            pin_id!([<PIO $Group _8>], [<Group $Group>], 8);
+            pin_id!([<PIO $Group _9>], [<Group $Group>], 9);
+            pin_id!([<PIO $Group _10>], [<Group $Group>], 10);
+            pin_id!([<PIO $Group _11>], [<Group $Group>], 11);
+            pin_id!([<PIO $Group _12>], [<Group $Group>], 12);
+            pin_id!([<PIO $Group _13>], [<Group $Group>], 13);
+            pin_id!([<PIO $Group _14>], [<Group $Group>], 14);
+            pin_id!([<PIO $Group _15>], [<Group $Group>], 15);
+            pin_id!([<PIO $Group _16>], [<Group $Group>], 16);
+            pin_id!([<PIO $Group _17>], [<Group $Group>], 17);
+            pin_id!([<PIO $Group _18>], [<Group $Group>], 18);
+            pin_id!([<PIO $Group _19>], [<Group $Group>], 19);
+            pin_id!([<PIO $Group _20>], [<Group $Group>], 20);
+            pin_id!([<PIO $Group _21>], [<Group $Group>], 21);
+            pin_id!([<PIO $Group _22>], [<Group $Group>], 22);
+            pin_id!([<PIO $Group _23>], [<Group $Group>], 23);
+            pin_id!([<PIO $Group _24>], [<Group $Group>], 24);
+            pin_id!([<PIO $Group _25>], [<Group $Group>], 25);
+            pin_id!([<PIO $Group _26>], [<Group $Group>], 26);
+            pin_id!([<PIO $Group _27>], [<Group $Group>], 27);
+            pin_id!([<PIO $Group _28>], [<Group $Group>], 28);
+            pin_id!([<PIO $Group _29>], [<Group $Group>], 29);
+            pin_id!([<PIO $Group _30>], [<Group $Group>], 31);
+            pin_id!([<PIO $Group _31>], [<Group $Group>], 31);
+        }
+    };
+}
 
-pin_id!(PIO1_0, Group1, 0);
-pin_id!(PIO1_1, Group1, 1);
-pin_id!(PIO1_2, Group1, 2);
-pin_id!(PIO1_3, Group1, 3);
-pin_id!(PIO1_4, Group1, 4);
-pin_id!(PIO1_5, Group1, 5);
-pin_id!(PIO1_6, Group1, 6);
-pin_id!(PIO1_7, Group1, 7);
-pin_id!(PIO1_8, Group1, 8);
-pin_id!(PIO1_9, Group1, 9);
-pin_id!(PIO1_10, Group1, 10);
-pin_id!(PIO1_11, Group1, 11);
-pin_id!(PIO1_12, Group1, 12);
-pin_id!(PIO1_13, Group1, 13);
-pin_id!(PIO1_14, Group1, 14);
-pin_id!(PIO1_15, Group1, 15);
+pin_id_group!(0);
+pin_id_group!(1);
+pin_id_group!(2);
+pin_id_group!(3);
+pin_id_group!(4);
+pin_id_group!(5);
+// Group 6 only has pins 0-27.
+pin_id!(PIO6_0, Group6, 0);
+pin_id!(PIO6_1, Group6, 1);
+pin_id!(PIO6_2, Group6, 2);
+pin_id!(PIO6_3, Group6, 3);
+pin_id!(PIO6_4, Group6, 4);
+pin_id!(PIO6_5, Group6, 5);
+pin_id!(PIO6_6, Group6, 6);
+pin_id!(PIO6_7, Group6, 7);
+pin_id!(PIO6_8, Group6, 8);
+pin_id!(PIO6_9, Group6, 9);
+pin_id!(PIO6_10, Group6, 10);
+pin_id!(PIO6_11, Group6, 11);
+pin_id!(PIO6_12, Group6, 12);
+pin_id!(PIO6_13, Group6, 13);
+pin_id!(PIO6_14, Group6, 14);
+pin_id!(PIO6_15, Group6, 15);
+pin_id!(PIO6_16, Group6, 16);
+pin_id!(PIO6_17, Group6, 17);
+pin_id!(PIO6_18, Group6, 18);
+pin_id!(PIO6_19, Group6, 19);
+pin_id!(PIO6_20, Group6, 20);
+pin_id!(PIO6_21, Group6, 21);
+pin_id!(PIO6_22, Group6, 22);
+pin_id!(PIO6_23, Group6, 23);
+pin_id!(PIO6_24, Group6, 24);
+pin_id!(PIO6_25, Group6, 25);
+pin_id!(PIO6_26, Group6, 26);
+pin_id!(PIO6_27, Group6, 27);
 
 mod private {
     /// Super trait used to mark traits with an exhaustive set of
@@ -222,6 +301,15 @@ impl<Id: PinId, const OOD: bool, const OFD: bool, const OSS: bool, IC: input::In
 {
     #[inline(always)]
     fn from(value: Pin<Id, output::Output<OOD, OFD, OSS>>) -> Self {
+        value.into_new_mode()
+    }
+}
+
+impl<Id: PinId, IC: input::InputConfig, const OOD: bool, const OFD: bool, const OSS: bool> From<Pin<Id, input::Input<IC>>>
+    for Pin<Id, output::Output<OOD, OFD, OSS>>
+{
+    #[inline(always)]
+    fn from(value: Pin<Id, input::Input<IC>>) -> Self {
         value.into_new_mode()
     }
 }

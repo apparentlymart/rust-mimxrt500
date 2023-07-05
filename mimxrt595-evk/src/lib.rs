@@ -1,5 +1,145 @@
 #![no_std]
 
+/// The RT500 HAL crate, re-exported for convenience.
+pub use mimxrt500_hal as hal;
+
+/// Additional types used inside [`Pins`].
+pub mod pins;
+
+/// Wraps the HAL-level Pins with alternative pin names that match the
+/// documented connections on the evaluation kit board.
+///
+/// Where possible the pins are grouped into nested structs based on the
+/// physical packages they are connected to, for convenience when passing all
+/// of the related pins together to a function that initializes a device driver.
+/// Some pins are connected to multiple on-board devices, so this categorization
+/// is not comprehensive.
+///
+/// To avoid emitting mode-setting code for pins that might never actually be
+/// used, the pins are still provided initially in unknown mode, and can then
+/// be converted into the appropriate mode by converting into one of the
+/// provided type aliases that specify the typical mode used for the device
+/// in question. For example, the following sets the red LED pin to be a GPIO
+/// output, with the `.into` method performing the mode change automatically:
+///
+/// ```rust
+/// let red_pin: mimxrt595_evk::pins::RgbLedRedPin = pins.rgb_led.red.into();
+/// ```
+pub struct Pins {
+    /// The pins connected to the on-board accelerometer chip.
+    pub accelerometer: pins::AccelerometerPins,
+
+    /// The pins connected to either of the on-board audio chips.
+    pub audio: pins::AudioPins,
+
+    /// The two pins connected to the "user buttons" at the top of the board,
+    /// as described in user guide section 8.8.
+    pub buttons: pins::UserButtonPins,
+
+    /// The pins connected to the "FlexIO" connector on the bottom of the board.
+    pub flex_io: pins::FlexIoPins,
+
+    /// The pins connected to the Link2 virtual COM port.
+    pub isp_uart: pins::IspUartPins,
+
+    /// The pins connected to both the MMC chip and the SD card socket.
+    pub mmc: pins::MmcPins,
+
+    /// The pins connected to the on-board PSRAM chip.
+    pub psram: pins::PsramPins,
+
+    /// The three pins connected to the on-board RGB LED, as described in
+    /// user guide section 8.7.
+    pub rgb_led: pins::RgbLedPins,
+}
+
+impl Pins {
+    /// Wrap the HAL-level pins object with the board-specific pins API.
+    #[inline(always)]
+    pub fn wrap(hal_pins: hal::gpio::Pins) -> Self {
+        Pins {
+            rgb_led: pins::RgbLedPins {
+                red: hal_pins.pio0_14,
+                green: hal_pins.pio1_0,
+                blue: hal_pins.pio3_17,
+            },
+            buttons: pins::UserButtonPins {
+                nmi: hal_pins.pio0_25,
+                irq: hal_pins.pio0_10,
+            },
+            accelerometer: pins::AccelerometerPins {
+                i2c_scl: hal_pins.pio0_29,
+                i2c_sda: hal_pins.pio0_30,
+                interrupt: hal_pins.pio0_22,
+            },
+            audio: pins::AudioPins {
+                i3c_sda: hal_pins.pio2_30,
+                i3c_scl: hal_pins.pio2_29,
+                i2s_bclk: hal_pins.pio0_7,
+                i2s_dai: hal_pins.pio0_9,
+                i2s_dao: hal_pins.pio0_23,
+                i2s_ws: hal_pins.pio0_8,
+                mclk: hal_pins.pio1_10,
+                alt_int: hal_pins.pio0_0,
+            },
+            flex_io: pins::FlexIoPins {
+                d0: hal_pins.pio4_20,
+                d1: hal_pins.pio4_21,
+                d2: hal_pins.pio4_22,
+                d3: hal_pins.pio4_23,
+                d4: hal_pins.pio4_24,
+                d5: hal_pins.pio4_25,
+                d6: hal_pins.pio4_26,
+                d7: hal_pins.pio4_27,
+                d8: hal_pins.pio4_28,
+                d9: hal_pins.pio4_29,
+                d10: hal_pins.pio4_30,
+                d11: hal_pins.pio4_31,
+                d12: hal_pins.pio5_0,
+                d13: hal_pins.pio5_1,
+                d14: hal_pins.pio5_2,
+                d15: hal_pins.pio5_3,
+            },
+            isp_uart: pins::IspUartPins {
+                txd: hal_pins.pio0_1,
+                rxd: hal_pins.pio0_2,
+                cts: hal_pins.pio0_3,
+                rts: hal_pins.pio0_4,
+            },
+            mmc: pins::MmcPins {
+                clk: hal_pins.pio1_30,
+                cmd: hal_pins.pio1_31,
+                d0: hal_pins.pio2_0,
+                d1: hal_pins.pio2_1,
+                d2: hal_pins.pio2_2,
+                d3: hal_pins.pio2_3,
+                d4: hal_pins.pio2_5,
+                d5: hal_pins.pio2_6,
+                d6: hal_pins.pio2_7,
+                d7: hal_pins.pio2_8,
+                sd_cd: hal_pins.pio2_9,
+                mmc_reset: hal_pins.pio2_10,
+                mmc_ds_sd_power_enable: hal_pins.pio2_4,
+            },
+            psram: pins::PsramPins {
+                cs: hal_pins.pio4_18,
+                reset: hal_pins.pio0_28,
+                sclk: hal_pins.pio4_11,
+                sclk_n: hal_pins.pio4_17,
+                dqs: hal_pins.pio4_16,
+                d0: hal_pins.pio4_12,
+                d1: hal_pins.pio4_13,
+                d2: hal_pins.pio4_14,
+                d3: hal_pins.pio4_15,
+                d4: hal_pins.pio5_15,
+                d5: hal_pins.pio5_16,
+                d6: hal_pins.pio5_17,
+                d7: hal_pins.pio5_18,
+            },
+        }
+    }
+}
+
 use mimxrt500_hal::bootrom::{
     flexspi_lut_seq, FlexSpiDllTime, FlexSpiLutSeq, FlexSpiMemConfig, FlexSpiNorFlashConfig,
     FlexspiLutCmd::*, FlexspiPad::*,

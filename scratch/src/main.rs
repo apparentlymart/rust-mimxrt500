@@ -8,7 +8,7 @@ extern crate mimxrt500_rt;
 extern crate mimxrt595s as pac;
 
 // Must link this to get the flash configuration block.
-extern crate mimxrt595_evk;
+extern crate mimxrt595_evk as evk;
 
 use mimxrt500_hal as hal;
 
@@ -30,24 +30,38 @@ fn main() -> ! {
     let resets = hal::resets::Resets::new(p.RSTCTL0, p.RSTCTL1);
 
     let pins = hal::gpio::Pins::new(p.IOPCTL, p.GPIO, clocks.gpio.into(), resets.gpio.into());
+    let pins = evk::Pins::wrap(pins);
     rprintln!("we have the pins object");
 
-    // LED is initially off
-    let led_pin = pins.pio0_14;
-    led_pin.set_output(false);
-    rprintln!("LED pin is initially off");
+    let red_pin = pins.rgb_led.red;
+    red_pin.set_output(false);
+    let blue_pin = pins.rgb_led.blue;
+    blue_pin.set_output(true);
+    rprintln!("red LED pin is initially off, blue is on");
 
-    let led_pin: hal::gpio::pin::Pin<hal::gpio::pin::PIO0_14, hal::gpio::pin::output::OutputPushPull> = led_pin.into();
+    let sw1_pin: evk::pins::NmiButtonPin = pins.buttons.nmi.into();
+
+    let red_pin: evk::pins::RgbLedRedPin = red_pin.into();
+    let blue_pin: evk::pins::RgbLedBluePin = blue_pin.into();
     rprintln!("LED pin is now a push-pull output");
 
-    blinky(led_pin)
+    blinky(red_pin, blue_pin, sw1_pin)
 }
 
-fn blinky(mut led_pin: impl embedded_hal::digital::ToggleableOutputPin) -> ! {
+fn blinky(
+    mut red_pin: impl embedded_hal::digital::ToggleableOutputPin,
+    mut blue_pin: impl embedded_hal::digital::ToggleableOutputPin,
+    sw1_pin: impl embedded_hal::digital::InputPin,
+) -> ! {
     loop {
         // Toggle the LED
-        led_pin.toggle().unwrap();
-        rprintln!("hello world!");
+        red_pin.toggle().unwrap();
+        blue_pin.toggle().unwrap();
+        if sw1_pin.is_low().unwrap() {
+            rprintln!("pressed");
+        } else {
+            rprintln!("not pressed");
+        }
 
         for _ in 0..80000 {
             cortex_m::asm::nop();

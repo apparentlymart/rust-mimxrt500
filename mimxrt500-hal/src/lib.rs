@@ -42,6 +42,10 @@ pub mod resets;
 #[cfg(feature = "device")]
 pub mod gpio;
 
+/// Flexcomm peripheral APIs, supporting USART, SPI, I2C, and I2S.
+#[cfg(feature = "device")]
+pub mod flexcomm;
+
 /// Types representing the data structures that the Boot ROM expects to find
 /// in different kinds of boot media.
 #[cfg(feature = "device")]

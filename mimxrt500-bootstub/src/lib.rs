@@ -24,8 +24,10 @@
 //! typically a small price to pay for the convenience of meeting the
 //! expectations of the embedded Rust ecosystem for Cortex-M-based platforms.
 #![no_std]
-//#![feature(naked_functions)]
-//#![feature(asm_const)]
+
+use core::arch::asm;
+
+pub mod bootrom;
 
 extern "C" {
     #[doc(hidden)]
@@ -51,9 +53,19 @@ macro_rules! bootstub {
             "b {bootstub}",
             ".cfi_endproc",
             ".size {entry}, . - {entry}",
-            entry = sym ::mimxrt500_bootstub::__mimxrt500_bootstub,
-            bootstub = sym ::mimxrt500_bootstub::__mimxrt500_bootstub_main,
+            entry = sym $crate::__mimxrt500_bootstub,
+            bootstub = sym $crate::__mimxrt500_bootstub_main,
         );
+    }
+}
+
+#[macro_export]
+macro_rules! fcb {
+    ($data:expr) => {
+        #[doc(hidden)]
+        #[link_section = ".mimxrt500_bootstub.fcb"]
+        #[no_mangle]
+        static __MIMXRT500_FCB: $crate::bootrom::FlexSpiNorFlashConfig = $data;
     }
 }
 
@@ -84,7 +96,9 @@ macro_rules! bootstub {
 );
 
 extern "C" fn default_exception_handler() {
-    loop {}
+    loop {
+        unsafe { asm!("wfi") };
+    }
 }
 
 #[doc(hidden)]

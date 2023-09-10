@@ -24,10 +24,10 @@ use mimxrt500_bootstub::{
         flexspi_lut_seq, FlexSpiDllTime, FlexSpiLutSeq, FlexSpiMemConfig, FlexSpiNorFlashConfig,
         FlexspiLutCmd::*, FlexspiPad::*,
     },
-    bootstub, fcb,
+    bootstub_standalone, fcb,
 };
 
-bootstub!(0x10000);
+bootstub_standalone!(0x10000);
 fcb!(FlexSpiNorFlashConfig {
     mem_config: FlexSpiMemConfig {
         tag: FlexSpiMemConfig::TAG,

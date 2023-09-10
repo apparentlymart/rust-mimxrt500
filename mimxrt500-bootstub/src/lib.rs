@@ -39,7 +39,7 @@ extern "C" {
 }
 
 #[macro_export]
-macro_rules! bootstub {
+macro_rules! bootstub_standalone {
     ($app_vectors:literal) => {
         ::core::arch::global_asm!(
             ".cfi_sections .debug_frame",

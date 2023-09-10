@@ -36,6 +36,8 @@ extern "C" {
     pub fn __mimxrt500_bootstub();
     #[doc(hidden)]
     fn __mimxrt500_bootstub_start();
+    #[doc(hidden)]
+    pub fn __STACK_START();
 }
 
 #[macro_export]
@@ -60,13 +62,58 @@ macro_rules! bootstub_standalone {
 }
 
 #[macro_export]
+macro_rules! bootstub_builtin {
+    () => {
+        ::core::arch::global_asm!(
+            ".cfi_sections .debug_frame",
+            ".section .mimxrt500_bootstub.text, \"ax\"",
+            ".global {entry}",
+            ".type {entry},%function",
+            ".thumb_func",
+            ".cfi_startproc",
+            "{entry}:",
+            "ldr r0,={vectors}",
+            "b {bootstub}",
+            ".cfi_endproc",
+            ".size {entry}, . - {entry}",
+            entry = sym $crate::__mimxrt500_bootstub,
+            bootstub = sym $crate::__mimxrt500_bootstub_main,
+            vectors = sym $crate::__STACK_START,
+        );
+    }
+}
+
+
+#[macro_export]
+macro_rules! bootstub_builtin_custom {
+    ($app_vectors:path) => {
+        ::core::arch::global_asm!(
+            ".cfi_sections .debug_frame",
+            ".section .mimxrt500_bootstub.text, \"ax\"",
+            ".global {entry}",
+            ".type {entry},%function",
+            ".thumb_func",
+            ".cfi_startproc",
+            "{entry}:",
+            "ldr r0,={vectors}",
+            "b {bootstub}",
+            ".cfi_endproc",
+            ".size {entry}, . - {entry}",
+            entry = sym $crate::__mimxrt500_bootstub,
+            bootstub = sym $crate::__mimxrt500_bootstub_main,
+            vectors = sym $app_vectors,
+        );
+    }
+}
+
+#[macro_export]
 macro_rules! fcb {
     ($data:expr) => {
         #[doc(hidden)]
         #[link_section = ".mimxrt500_bootstub.fcb"]
         #[no_mangle]
         static __MIMXRT500_FCB: $crate::bootrom::FlexSpiNorFlashConfig = $data;
-    }
+    };
 }
 
 ::core::arch::global_asm!(
@@ -108,7 +155,9 @@ pub union Vector {
     reserved: u32,
 }
 
-const DEFAULT_VECTOR: Vector = Vector { handler: default_exception_handler };
+const DEFAULT_VECTOR: Vector = Vector {
+    handler: default_exception_handler,
+};
 const RESERVED_VECTOR: Vector = Vector { reserved: 0 };
 
 const IMGTYPE_PLAIN_NO_SECURE: u32 = 0x00004000;
@@ -120,7 +169,9 @@ pub static __mimxrt500_bootstub_exceptions: [Vector; 16] = [
     // Initial stack pointer is irrelevant because we don't use the stack
     RESERVED_VECTOR,
     // Reset vector is the generated boot stub
-    Vector { handler: __mimxrt500_bootstub },
+    Vector {
+        handler: __mimxrt500_bootstub,
+    },
     // NMI Exception
     DEFAULT_VECTOR,
     // HardFault Exception
@@ -137,9 +188,7 @@ pub static __mimxrt500_bootstub_exceptions: [Vector; 16] = [
     // isn't really relevant here because we're not using the boot ROM's
     // checksum and copy-to-RAM features. We'll just claim that the
     // vector table is the entirety of the image.
-    Vector {
-        reserved: 16*4,
-    },
+    Vector { reserved: 16 * 4 },
     // Entry 9 is used by the RT500 boot ROM as the image type.
     Vector {
         reserved: IMGTYPE_PLAIN_NO_SECURE,
@@ -161,5 +210,3 @@ pub static __mimxrt500_bootstub_exceptions: [Vector; 16] = [
     // SysTick Exception.
     DEFAULT_VECTOR,
 ];
-
-

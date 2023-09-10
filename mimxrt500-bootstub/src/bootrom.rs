@@ -203,6 +203,7 @@ pub enum FlexspiPad {
     FLEXSPI_8PAD = 3,
 }
 
+#[inline(always)]
 pub const fn flexspi_lut_seq(
     cmd0: FlexspiLutCmd,
     pad0: FlexspiPad,

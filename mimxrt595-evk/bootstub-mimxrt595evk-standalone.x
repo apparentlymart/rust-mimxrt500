@@ -32,6 +32,7 @@ SECTIONS
   .mimxrt500_bootstub.text ORIGIN(BOOTSTUB) :
   {
     FILL(0xffffffff)
+    __mimxrt500_bootstub_image_start = .;
     __mimxrt500_bootstub_vectors_start = .;
     KEEP(*(.mimxrt500_bootstub.exceptions));
     __mimxrt500_bootstub_vectors_end = .;
@@ -42,10 +43,14 @@ SECTIONS
 
   /* This address (64KiB into flash) is where the main application
       vector table should be placed. */
-  __mimxrt500_bootstub_app_start = ORIGIN(FLASH) + 0x10000;
+  __mimxrt500_bootstub_app_start = 0x08010000;
 
   /DISCARD/ : {
     *(.init);
     *(.fini);
+    *(.text .text.*);
+    *(.ARM.*);
+    *(.comment);
+    *(.debug_frame);
   }
 }

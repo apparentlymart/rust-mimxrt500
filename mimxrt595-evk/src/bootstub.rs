@@ -1,34 +1,11 @@
-//! A standalone boot stub intended for use with the mimxrt595-evk evaluation
-//! board.
-//!
-//! This generates some code suitable for writing into the first page of
-//! the flash memory connected to FlexSPI0 on the evaluation board, which is
-//! where the main chip's boot ROM expects to find a NOR flash header and
-//! an initial vector table. Along with those two prerequisites, the boot
-//! stub image also includes a small amount of code which arranges to run
-//! a `cortex-m-rt`-style program placed at offset 64KiB in the flash
-//! memory.
-//!
-//! Once this stub is present, you can build your real application using
-//! `cortex-m-rt` as normal and arrange for your linker to place its
-//! vector table at offset `0x10000` (64KiB) in flash, so that the stub
-//! code can find it and jump into it.
-#![no_std]
-#![no_main]
-#![feature(start)]
-
-use core::{panic::PanicInfo, arch::asm};
-
-use mimxrt500_bootstub::{
-    bootrom::{
-        flexspi_lut_seq, FlexSpiDllTime, FlexSpiLutSeq, FlexSpiMemConfig, FlexSpiNorFlashConfig,
-        FlexspiLutCmd::*, FlexspiPad::*,
-    },
-    bootstub_standalone, fcb,
+use mimxrt500_bootstub::bootrom::{
+    flexspi_lut_seq, FlexSpiDllTime, FlexSpiLutSeq, FlexSpiMemConfig, FlexSpiNorFlashConfig,
+    FlexspiLutCmd::*, FlexspiPad::*,
 };
 
-bootstub_standalone!(0x10000);
-fcb!(FlexSpiNorFlashConfig {
+/// A flash control block suitable for booting from the NOR flash soldered on
+/// to the evaluation kit board, connected to FlexSPI0.
+pub const FCB: FlexSpiNorFlashConfig = FlexSpiNorFlashConfig {
     mem_config: FlexSpiMemConfig {
         tag: FlexSpiMemConfig::TAG,
         version: FlexSpiMemConfig::VERSION,
@@ -189,12 +166,4 @@ fcb!(FlexSpiNorFlashConfig {
     block_size: 64 * 1024,
     flash_state_ctx: 0x07008200,
     reserved2: [0; 10],
-});
-
-#[panic_handler]
-fn panic_halt(_arg: &PanicInfo) -> ! {
-    loop {
-        unsafe { asm!("wfi") };
-    }
-}
-
+};

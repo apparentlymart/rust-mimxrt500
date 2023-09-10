@@ -1,5 +1,4 @@
 {
-  "rust-analyzer.cargo.features": ["mimxrt500-rt/device"],
   "rust-analyzer.checkOnSave.allTargets": false,
   "rust-analyzer.checkOnSave.extraArgs": ["--target", "thumbv8m.main-none-eabi"]
 }

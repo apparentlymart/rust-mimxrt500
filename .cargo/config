@@ -1,5 +1,5 @@
 [target.thumbv8m.main-none-eabi]
-rustflags = ["-C", "link-arg=-Tmimxrt500-link.x", "-C", "link-arg=-march=armv8-m.main", "-C", "linker=arm-none-eabi-gcc"]
+rustflags = ["-C", "link-arg=-march=armv8-m.main", "-C", "linker=arm-none-eabi-gcc"]
 
 [build]
 target = "thumbv8m.main-none-eabi"

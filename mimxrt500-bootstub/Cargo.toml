@@ -2,13 +2,9 @@
 description = "Glue code to make cortex-m-rt work with NXP i.MX RT500 series chips when booting from FlexSPI NOR flash"
 edition = "2021"
 license = "MIT"
-name = "mimxrt595s-bootstub"
+name = "mimxrt500-bootstub"
 repository = "https://github.com/apparentlymart/rust-mimxrt500"
 version = "0.1.0"
-
-[[bin]]
-name = "bootstub-evk"
-path = "src/bin/bootstub-evk.rs"
 
 [lib]
 name = "mimxrt500_bootstub"

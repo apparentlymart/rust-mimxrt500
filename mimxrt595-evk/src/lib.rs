@@ -6,6 +6,11 @@ pub use mimxrt500_hal as hal;
 /// Additional types used inside [`Pins`].
 pub mod pins;
 
+pub mod bootstub;
+
+#[cfg(feature = "bootstub")]
+mod bootstub_builtin;
+
 /// Wraps the HAL-level Pins with alternative pin names that match the
 /// documented connections on the evaluation kit board.
 ///

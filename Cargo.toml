@@ -3,8 +3,8 @@ members = [
   "mimxrt595s",
   "mimxrt500-bootstub",
   "mimxrt500-hal",
-  "mimxrt500-rt",
   "mimxrt595-evk",
+  "mimxrt595-evk-bootstub",
   "scratch",
 ]
 resolver = "2"

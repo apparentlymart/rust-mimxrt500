@@ -35,9 +35,9 @@ extern "C" {
     #[doc(hidden)]
     pub fn __mimxrt500_bootstub();
     #[doc(hidden)]
-    fn __mimxrt500_bootstub_start();
+    fn __mimxrt500_bootstub_image_start();
     #[doc(hidden)]
-    pub fn __STACK_START();
+    pub fn __vector_table();
 }
 
 #[macro_export]
@@ -78,7 +78,7 @@ macro_rules! bootstub_builtin {
             ".size {entry}, . - {entry}",
             entry = sym $crate::__mimxrt500_bootstub,
             bootstub = sym $crate::__mimxrt500_bootstub_main,
-            vectors = sym $crate::__STACK_START,
+            vectors = sym $crate::__vector_table,
         );
     }
 }
@@ -166,8 +166,10 @@ const IMGTYPE_PLAIN_NO_SECURE: u32 = 0x00004000;
 #[link_section = ".mimxrt500_bootstub.exceptions"]
 #[no_mangle]
 pub static __mimxrt500_bootstub_exceptions: [Vector; 16] = [
-    // Initial stack pointer is irrelevant because we don't use the stack
-    RESERVED_VECTOR,
+    // Initial stack pointer is irrelevant because we don't use the stack,
+    // but the boot ROM seems to verify that this points to a reasonable
+    // address in RAM, so we'll just arbitrarily choose one.
+    Vector { reserved: 0x5000 },
     // Reset vector is the generated boot stub
     Vector {
         handler: __mimxrt500_bootstub,
@@ -188,13 +190,13 @@ pub static __mimxrt500_bootstub_exceptions: [Vector; 16] = [
     // isn't really relevant here because we're not using the boot ROM's
     // checksum and copy-to-RAM features. We'll just claim that the
     // vector table is the entirety of the image.
-    Vector { reserved: 16 * 4 },
+    Vector { reserved: 256 * 4 },
     // Entry 9 is used by the RT500 boot ROM as the image type.
     Vector {
         reserved: IMGTYPE_PLAIN_NO_SECURE,
     },
     // Reserved entry
-    Vector { reserved: 0 },
+    RESERVED_VECTOR,
     // SVCall Exception
     DEFAULT_VECTOR,
     // Debug Monitor Exception
@@ -203,7 +205,7 @@ pub static __mimxrt500_bootstub_exceptions: [Vector; 16] = [
     // which must point to the start of this vector table for a flash XIP
     // image.
     Vector {
-        handler: __mimxrt500_bootstub_start,
+        handler: __mimxrt500_bootstub_image_start,
     },
     // PendSV Exception
     DEFAULT_VECTOR,

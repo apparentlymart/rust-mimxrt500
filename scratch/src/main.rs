@@ -2,17 +2,20 @@
 #![no_main]
 
 // Must link the runtime to get its exception vector table.
-extern crate mimxrt500_rt;
+extern crate cortex_m_rt;
 
 // Must link this generated PAC to get its default interrupt vector table.
 extern crate mimxrt595s as pac;
 
-// Must link this to get the flash configuration block.
+// Must link the bootstub crate to get a suitable flash control block and
+// boot glue code.
+extern crate mimxrt595_evk_bootstub as _;
+
 extern crate mimxrt595_evk as evk;
 
 use mimxrt500_hal as hal;
 
-use mimxrt500_rt::entry;
+use cortex_m_rt::entry;
 use panic_rtt_target as _;
 use rtt_target::{rprintln, rtt_init_print};
 

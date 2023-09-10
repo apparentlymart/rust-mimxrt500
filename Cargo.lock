@@ -31,6 +31,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cortex-m-rt"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ee84e813d593101b1723e13ec38b6ab6abbdbaaa4546553f5395ed274079ddb1"
+dependencies = [
+ "cortex-m-rt-macros",
+]
+
+[[package]]
 name = "cortex-m-rt-macros"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -43,9 +52,9 @@ dependencies = [
 
 [[package]]
 name = "critical-section"
-version = "1.1.1"
+version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6548a0ad5d2549e111e1f6a11a6c2e2d00ce6a3dafe22948d67c2b443f775e52"
+checksum = "7059fff8937831a9ae6f0fe4d658ffabf58f2ca96aa9dec1c889f936f705f216"
 
 [[package]]
 name = "embedded-hal"
@@ -59,9 +68,9 @@ dependencies = [
 
 [[package]]
 name = "embedded-hal"
-version = "1.0.0-alpha.11"
+version = "1.0.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7724ebabcadfeb15920571dd727bc8ccde8586e52f2890bdb8182fdf42c3ff2"
+checksum = "2894bc2f0457b8ca3d6b8ab8aad64d9337583672494013457f86c5a9146c0e22"
 
 [[package]]
 name = "jlink_rtt"
@@ -70,11 +79,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42f6af40154f64bd7095b5245d6933fef99b0a28c432b38a676cfafaa0aedfc2"
 
 [[package]]
+name = "mimxrt500-bootstub"
+version = "0.1.0"
+
+[[package]]
 name = "mimxrt500-hal"
 version = "0.3.0"
 dependencies = [
  "cortex-m",
- "embedded-hal 1.0.0-alpha.11",
+ "embedded-hal 1.0.0-rc.1",
  "jlink_rtt",
  "mimxrt595s",
  "nb 1.1.0",
@@ -82,19 +95,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "mimxrt500-rt"
-version = "0.1.0"
-dependencies = [
- "cortex-m",
- "cortex-m-rt-macros",
-]
-
-[[package]]
 name = "mimxrt595-evk"
 version = "0.2.0"
 dependencies = [
+ "mimxrt500-bootstub",
  "mimxrt500-hal",
  "mimxrt595s",
+]
+
+[[package]]
+name = "mimxrt595-evk-bootstub"
+version = "0.1.0"
+dependencies = [
+ "mimxrt500-bootstub",
+ "mimxrt595-evk",
 ]
 
 [[package]]
@@ -102,14 +116,10 @@ name = "mimxrt595s"
 version = "0.2.0"
 dependencies = [
  "cortex-m",
+ "cortex-m-rt",
  "critical-section",
- "mimxrt500-rt",
  "vcell",
 ]
-
-[[package]]
-name = "mimxrt595s-bootstub"
-version = "0.1.0"
 
 [[package]]
 name = "nb"
@@ -138,24 +148,24 @@ dependencies = [
 
 [[package]]
 name = "paste"
-version = "1.0.12"
+version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f746c4065a8fa3fe23974dd82f15431cc8d40779821001404d10d2e79ca7d79"
+checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.59"
+version = "1.0.66"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6aeca18b86b413c660b781aa319e4e2648a3e6f9eadc9b47e9038e6fe9f3451b"
+checksum = "18fb31db3f9bddb2ea821cde30a9f70117e3f119938b5ee630b7403aa6e2ead9"
 dependencies = [
  "unicode-ident",
 ]
 
 [[package]]
 name = "quote"
-version = "1.0.28"
+version = "1.0.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b9ab9c7eadfd8df19006f1cf1a4aed13540ed5cbc047010ece5826e10825488"
+checksum = "5267fca4496028628a95160fc423a33e8b2e6af8a5302579e322e4b520293cae"
 dependencies = [
  "proc-macro2",
 ]
@@ -193,10 +203,11 @@ name = "scratch"
 version = "0.1.0"
 dependencies = [
  "cortex-m",
- "embedded-hal 1.0.0-alpha.11",
+ "cortex-m-rt",
+ "embedded-hal 1.0.0-rc.1",
  "mimxrt500-hal",
- "mimxrt500-rt",
  "mimxrt595-evk",
+ "mimxrt595-evk-bootstub",
  "mimxrt595s",
  "panic-rtt-target",
  "rtt-target 0.4.0",
@@ -236,9 +247,9 @@ checksum = "e87a2ed6b42ec5e28cc3b94c09982969e9227600b2e3dcbc1db927a84c06bd69"
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.9"
+version = "1.0.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b15811caf2415fb889178633e7724bad2509101cde276048e013b9def5e51fa0"
+checksum = "301abaae475aa91687eb82514b328ab47a211a533026cb25fc3e519b86adfc3c"
 
 [[package]]
 name = "vcell"

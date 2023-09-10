@@ -95,6 +95,7 @@ macro_rules! fcb {
     bootstub = sym __mimxrt500_bootstub_main,
 );
 
+#[link_section = ".mimxrt500_bootstub.text"]
 extern "C" fn default_exception_handler() {
     loop {
         unsafe { asm!("wfi") };

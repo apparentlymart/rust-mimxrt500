@@ -10,40 +10,39 @@
 
 MEMORY
 {
-  FLASH : ORIGIN = 0x08000000, LENGTH = 64K
+  FCB : ORIGIN = 0x08000400, LENGTH = 512
+  BOOTSTUB : ORIGIN = 0x08001000, LENGTH = 61440
 }
 
 SECTIONS
 {
-  .mimxrt500_bootstub ORIGIN(FLASH) :
+  /* Flash Control Block: this must be present for the boot ROM to
+     consider this flash as a valid boot candidate. */
+  .mimxrt500_bootstub.fcb ORIGIN(FCB) :
   {
-    __mimxrt500_bootstub_reserved_start = .;
     FILL(0xffffffff)
-
-    /* Flash Control Block: this must be present for the boot ROM to
-       consider this flash as a valid boot candidate. */
-    . = ORIGIN(FLASH) + 0x0400;
     __mimxrt500_bootstub_fcb_start = .;
     KEEP(*(.mimxrt500_bootstub.fcb));
     __mimxrt500_bootstub_fcb_end = .;
+  } > FCB
 
-    /* Initial vector table: this is used only during early boot
-       and contains some image metadata nestled in some fields that
-       are normally reserved on ARMv8-M. */
-    . = ORIGIN(FLASH) + 0x1000;
+  /* Initial vector table and boot code: this is used only during early
+     boot and contains some image metadata nestled in some fields that
+     are normally reserved on ARMv8-M. */
+  .mimxrt500_bootstub.text ORIGIN(BOOTSTUB) :
+  {
+    FILL(0xffffffff)
     __mimxrt500_bootstub_vectors_start = .;
     KEEP(*(.mimxrt500_bootstub.exceptions));
     __mimxrt500_bootstub_vectors_end = .;
     __mimxrt500_bootstub_start = .;
     KEEP(*(.mimxrt500_bootstub .mimxrt500_bootstub.*));
     __mimxrt500_bootstub_end = .;
+  } > BOOTSTUB
 
-    __mimxrt500_bootstub_reserved_end = ORIGIN(FLASH) + 0x10000;
-
-    /* This address (64KiB into flash) is where the main application
-       vector table should be placed. */
-    __mimxrt500_bootstub_app_start = ORIGIN(FLASH) + 0x10000;
-  } > FLASH
+  /* This address (64KiB into flash) is where the main application
+      vector table should be placed. */
+  __mimxrt500_bootstub_app_start = ORIGIN(FLASH) + 0x10000;
 
   /DISCARD/ : {
     *(.init);

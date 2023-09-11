@@ -13,3 +13,10 @@ path = "src/lib.rs"
 [dependencies]
 mimxrt500-bootstub = {version = "0.1.0", path = "../mimxrt500-bootstub"}
 mimxrt595-evk = {version = "0.2.0", path = "../mimxrt595-evk"}
+
+[features]
+bootstub = []
+default = ['bootstub']
+
+[package.metadata.docs.rs]
+no-default-features = true

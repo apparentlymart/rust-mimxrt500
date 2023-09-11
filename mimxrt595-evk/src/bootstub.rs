@@ -1,3 +1,6 @@
+//! Data for producing a flash control block describing the SPI NOR flash
+//! connected to FlexSPI0 on the evaluation kit board.
+
 use mimxrt500_bootstub::bootrom::{
     flexspi_lut_seq, FlexSpiDllTime, FlexSpiLutSeq, FlexSpiMemConfig, FlexSpiNorFlashConfig,
     FlexspiLutCmd::*, FlexspiPad::*,

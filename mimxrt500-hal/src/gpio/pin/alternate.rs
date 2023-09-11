@@ -1,7 +1,7 @@
-use paste::paste;
-use core::marker::PhantomData;
-use super::{private, PinMode};
 use super::super::dynpin::{DynAltFunc, DynPinMode, DynSignalType};
+use super::{private, PinMode};
+use core::marker::PhantomData;
+use paste::paste;
 
 macro_rules! alt_function {
     (

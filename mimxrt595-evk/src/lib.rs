@@ -1,3 +1,16 @@
+//! A board support package for MIMXRT595-EVK, the official evaluation kit
+//! for the NXP i.MX RT500 family of microcontrollers.
+//!
+//! It also includes a `memory.x` file intended for inclusion into the linker
+//! script provided by crate `cortex-m-rt`.
+//!
+//! If you are building an application targeting this board, you will need to
+//! arrange for your flash image to contain a suitable flash control block
+//! and initial vector table so that the on-chip boot ROM will consider it
+//! eligable for use as boot media. You can get a default implementation of
+//! that by linking the separate crate `mimxrt595-evk-bootstub` into your
+//! program, or customize what's generated using the macros in crate
+//! `mimxrt500-bootstub`.
 #![no_std]
 
 /// The RT500 HAL crate, re-exported for convenience.
@@ -7,9 +20,6 @@ pub use mimxrt500_hal as hal;
 pub mod pins;
 
 pub mod bootstub;
-
-#[cfg(feature = "bootstub")]
-mod bootstub_builtin;
 
 /// Wraps the HAL-level Pins with alternative pin names that match the
 /// documented connections on the evaluation kit board.

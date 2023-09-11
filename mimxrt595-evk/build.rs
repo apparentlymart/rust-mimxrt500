@@ -17,7 +17,10 @@ fn main() {
         .unwrap()
         .write_all(include_bytes!("bootstub-mimxrt595evk-standalone.x"))
         .unwrap();
-    println!("cargo:rustc-link-arg-bin=bootstub-evk=-T{}", evk_standalone_linkscript.display());
+    println!(
+        "cargo:rustc-link-arg-bin=bootstub-evk=-T{}",
+        evk_standalone_linkscript.display()
+    );
 
     // Re-run the build script if either linker script has changed.
     println!("cargo:rerun-if-changed=memory.x");

@@ -64,7 +64,7 @@ impl<Id: SingletonPinId> SingletonPin<Id> {
         // (a * 0x80) + (b * 4) from the IOPCTL peripheral, as in
         // PIOa_b.
         let dyn_id = self.id.id();
-        let base =  pac::IOPCTL::ptr() as *mut u8;
+        let base = pac::IOPCTL::ptr() as *mut u8;
         let offset_bytes = (dyn_id.group.index() * 0x80) + (dyn_id.num as usize * 4);
         unsafe { base.add(offset_bytes) as *mut u32 }
     }

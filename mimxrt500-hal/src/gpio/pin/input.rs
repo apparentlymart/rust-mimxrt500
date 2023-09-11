@@ -1,6 +1,6 @@
-use core::marker::PhantomData;
-use super::{private, PinMode};
 use super::super::dynpin::{DynInput, DynPinMode};
+use super::{private, PinMode};
+use core::marker::PhantomData;
 
 /// The [`PinMode`] for pins in input modes.
 pub struct Input<C: InputConfig> {

@@ -1,6 +1,6 @@
 use super::dynpin::{DynPin, DynPinId, DynPinMode};
-use embedded_hal::digital as ehal;
 use core::marker::PhantomData;
+use embedded_hal::digital as ehal;
 use paste::paste;
 
 /// Types for representing alternate function modes.
@@ -152,8 +152,7 @@ where
         // Safety: this is safe as long as we've correctly guaranteed that it's
         // impossible to construct a Pin with invalid ID and mode.
         unsafe { DynPin::new(I::DYN, M::DYN) }
-    }    
-
+    }
 }
 
 struct InternalPinId<I: PinId>(PhantomData<I>);
@@ -280,7 +279,9 @@ impl<Id: PinId, C: input::InputConfig> From<Pin<Id, Unknown>> for Pin<Id, input:
     }
 }
 
-impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> From<Pin<Id, Unknown>> for Pin<Id, output::Output<OD, FD, SS>> {
+impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> From<Pin<Id, Unknown>>
+    for Pin<Id, output::Output<OD, FD, SS>>
+{
     #[inline(always)]
     fn from(value: Pin<Id, Unknown>) -> Self {
         value.into_new_mode()
@@ -296,8 +297,8 @@ impl<Id: PinId, F: alternate::AltFunc, ST: alternate::SignalType> From<Pin<Id, U
     }
 }
 
-impl<Id: PinId, const OOD: bool, const OFD: bool, const OSS: bool, IC: input::InputConfig> From<Pin<Id, output::Output<OOD, OFD, OSS>>>
-    for Pin<Id, input::Input<IC>>
+impl<Id: PinId, const OOD: bool, const OFD: bool, const OSS: bool, IC: input::InputConfig>
+    From<Pin<Id, output::Output<OOD, OFD, OSS>>> for Pin<Id, input::Input<IC>>
 {
     #[inline(always)]
     fn from(value: Pin<Id, output::Output<OOD, OFD, OSS>>) -> Self {
@@ -305,8 +306,8 @@ impl<Id: PinId, const OOD: bool, const OFD: bool, const OSS: bool, IC: input::In
     }
 }
 
-impl<Id: PinId, IC: input::InputConfig, const OOD: bool, const OFD: bool, const OSS: bool> From<Pin<Id, input::Input<IC>>>
-    for Pin<Id, output::Output<OOD, OFD, OSS>>
+impl<Id: PinId, IC: input::InputConfig, const OOD: bool, const OFD: bool, const OSS: bool>
+    From<Pin<Id, input::Input<IC>>> for Pin<Id, output::Output<OOD, OFD, OSS>>
 {
     #[inline(always)]
     fn from(value: Pin<Id, input::Input<IC>>) -> Self {
@@ -332,7 +333,9 @@ impl<Id: PinId, C: input::InputConfig> ehal::InputPin for Pin<Id, input::Input<C
 }
 
 /// Pins in output mode implement [`ehal::OutputPin`].
-impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> ehal::OutputPin for Pin<Id, output::Output<OD, FD, SS>> {
+impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> ehal::OutputPin
+    for Pin<Id, output::Output<OD, FD, SS>>
+{
     #[inline(always)]
     fn set_low(&mut self) -> Result<(), Self::Error> {
         self.regs.set_output_value(false);
@@ -347,7 +350,9 @@ impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> ehal::OutputPin 
 }
 
 /// Pins in output mode implement [`ehal::ToggleableOutputPin`].
-impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> ehal::ToggleableOutputPin for Pin<Id, output::Output<OD, FD, SS>> {
+impl<Id: PinId, const OD: bool, const FD: bool, const SS: bool> ehal::ToggleableOutputPin
+    for Pin<Id, output::Output<OD, FD, SS>>
+{
     fn toggle(&mut self) -> Result<(), Self::Error> {
         self.regs.toggle_output_value();
         Ok(())

@@ -7,6 +7,8 @@ MEMORY
   RAM (wx) : ORIGIN = 0x00008000, LENGTH = 5088K
 }
 
+_stack_start = ORIGIN(REBOOTRAM) + 4096;
+
 SECTIONS
 {
   /* Flash Control Block: this must be present for the boot ROM to

@@ -1,3 +1,6 @@
+//! Contains some types representing data structures consumed by the on-chip
+//! boot ROM.
+
 /// Describes the shape of the flash configuration header that the Boot ROM
 /// expects to find at offset 0x0400 in the flash memory connected to
 /// FlexSPI0, if booting from that device.

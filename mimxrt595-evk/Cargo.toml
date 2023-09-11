@@ -4,7 +4,7 @@ edition = "2021"
 license = "MIT"
 name = "mimxrt595-evk"
 repository = "https://github.com/apparentlymart/rust-mimxrt500"
-version = "0.4.0"
+version = "0.5.0"
 
 [[bin]]
 name = "bootstub-evk"
@@ -16,9 +16,9 @@ name = "mimxrt595_evk"
 path = "src/lib.rs"
 
 [dependencies]
-mimxrt500-bootstub = {version = "0.2.0", path = "../mimxrt500-bootstub"}
-mimxrt500-hal = {version = "0.5.0", path = "../mimxrt500-hal", features = ["mimxrt595s"]}
-mimxrt595s = {version = "0.4.0", path = "../mimxrt595s"}
+mimxrt500-bootstub = {version = "0.3.0", path = "../mimxrt500-bootstub"}
+mimxrt500-hal = {version = "0.6.0", path = "../mimxrt500-hal", features = ["mimxrt595s"]}
+mimxrt595s = {version = "0.5.0", path = "../mimxrt595s"}
 
 [features]
 bootstub-standalone-bin = []

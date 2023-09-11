@@ -84,7 +84,7 @@ version = "0.1.0"
 
 [[package]]
 name = "mimxrt500-hal"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "cortex-m",
  "embedded-hal 1.0.0-rc.1",
@@ -96,7 +96,7 @@ dependencies = [
 
 [[package]]
 name = "mimxrt595-evk"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "mimxrt500-bootstub",
  "mimxrt500-hal",
@@ -113,7 +113,7 @@ dependencies = [
 
 [[package]]
 name = "mimxrt595s"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",

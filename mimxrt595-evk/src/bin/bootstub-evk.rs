@@ -21,7 +21,7 @@ use core::{arch::asm, panic::PanicInfo};
 
 use mimxrt500_bootstub::{bootstub_standalone, fcb};
 
-bootstub_standalone!(0x10000);
+bootstub_standalone!(0x80010000);
 fcb!(mimxrt595_evk::bootstub::FCB);
 
 #[panic_handler]
